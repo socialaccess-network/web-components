@@ -1,6 +1,6 @@
 {
 	"name": "@sa-net/web-components",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"type": "module",
 	"main": "dist/web-components.js",
 	"module": "dist/web-components.js",
