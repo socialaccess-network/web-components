@@ -1,0 +1,34 @@
+{
+	"name": "@sa-net/web-components",
+	"version": "0.0.2",
+	"type": "module",
+	"main": "dist/web-components.js",
+	"module": "dist/web-components.js",
+	"types": "dist/web-components.d.ts",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"import": "./dist/web-components.js",
+			"types": "./dist/web-components.d.ts"
+		}
+	},
+	"files": [
+		"src",
+		"dist",
+		"package.json"
+	],
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite --config vite.build.config.ts build",
+		"publish": "yarn build && yarn npm publish --access public"
+	},
+	"devDependencies": {
+		"typescript": "^5.2.2",
+		"vite": "^5.0.0",
+		"vite-plugin-dts": "^3.6.4"
+	},
+	"packageManager": "yarn@4.0.2",
+	"dependencies": {
+		"@sa-net/utils": "^1.1.0"
+	}
+}
