@@ -1,3 +1,6 @@
 export * from './utils'
 export * from './WebComponent'
 export * from './TextComponent'
+export * from './Reactive'
+export * from './Computed'
+export * from './Ref'

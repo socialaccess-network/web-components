@@ -55,7 +55,7 @@ export abstract class WebComponent<
 	}
 
 	constructor(
-		props: Props,
+		props: Props = {} as any,
 		...children: Array<ElementChildren | ElementChildren[]>
 	) {
 		super()
@@ -153,7 +153,7 @@ export abstract class WebComponent<
 }
 
 export type WebComponentClass<WC extends WebComponent<any>> = (new (
-	props: WC['@props'],
+	props?: WC['@props'],
 	...children: ElementChildren[]
 ) => WC) & {
 	[K in keyof typeof WebComponent]: (typeof WebComponent)[K]

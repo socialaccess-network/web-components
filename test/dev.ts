@@ -1,48 +1,57 @@
-import { defaults } from '@sa-net/utils'
 import {
+	Computed,
+	Reactive,
+	Ref,
 	TextComponent,
 	WebComponent,
-	createElement,
-	css,
 	html,
 } from '@sa-net/web-components'
 
+export class ReactiveText extends WebComponent {
+	static {
+		this.define()
+	}
+
+	protected label: TextComponent
+
+	onValueChange = (value: string) => {
+		this.label.value = value
+	}
+
+	constructor(public readonly text: Ref<string>) {
+		super()
+		this.label = new TextComponent(text.get())
+	}
+
+	mounted() {
+		console.log('mounted')
+		this.text.sub(this.onValueChange)
+	}
+
+	unmounted() {
+		console.log('unmounted')
+		this.text.unsub(this.onValueChange)
+	}
+
+	render() {
+		return this.label
+	}
+}
+
 export class TestButton extends WebComponent<{
-	color: TextComponent
-	onClick(this: HTMLButtonElement, event: MouseEvent): void
+	label: Ref<string>
 }> {
 	static {
 		this.define()
 	}
 
-	protected get props() {
-		return defaults(super.props, {
-			color: new TextComponent('red'),
-		})
-	}
-
-	mounted() {
-		setInterval(() => {
-			this.props.color.value = this.props.color.value === 'red' ? 'blue' : 'red'
-		}, 500)
+	get label() {
+		return this.props.label ?? new Ref('')
 	}
 
 	render() {
-		const style = css`
-			button {
-				color: ${this.props.color};
-			}
-		`
-
-		const button = createElement(
-			'button',
-			{
-				onClick: this.props.onClick,
-			},
-			createElement('slot')
-		)
-
-		return html` ${style} ${button} `
+		const label = new ReactiveText(this.label)
+		return html`<button>${label}</button>`
 	}
 }
 
@@ -51,32 +60,39 @@ export class TestComponent extends WebComponent {
 		this.define()
 	}
 
-	buttonColor = new TextComponent('red')
-	button = new TestButton(
-		{
-			color: this.buttonColor.clone(),
-			onClick() {
-				console.log(this.innerText)
-			},
-		},
-		['Click Me!']
+	test = new Computed(
+		() => this.state.get('test') + this.state.get('foo'),
+		value => this.state.set('test', value)
 	)
 
-	mounted(): void {
-		for (let i = 0; i < 10000; i++) {
-			this.buttonColor.clone()
-		}
+	state = new Reactive({
+		test: 'hello',
+		foo: new Ref('bar'),
+	})
+
+	button = new TestButton({
+		label: this.test,
+	})
+
+	mounted() {
+		setTimeout(() => {
+			this.test.set('world')
+		}, 1000)
+
+		setTimeout(() => {
+			this.button.remove()
+		}, 2000)
+
+		setTimeout(() => {
+			this.shadow.append(this.button)
+		}, 3000)
+
+		setTimeout(() => {
+			this.test.set('hello')
+		}, 4000)
 	}
 
 	render() {
-		return html`
-			${css`
-				h1 {
-					color: ${this.buttonColor};
-				}
-			`}
-			<h1>Test</h1>
-			${this.button}
-		`
+		return this.button
 	}
 }

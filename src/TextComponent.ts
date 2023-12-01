@@ -33,6 +33,7 @@ export class TextComponent extends Text {
 	deref() {
 		this.clones.delete(this)
 		this.clones = new Set([this])
+
 		return this
 	}
 }
